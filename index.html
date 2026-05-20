@@ -133,6 +133,10 @@ const keywords = [
   "smartwatch waterproof",
   "smartwatch keren",
   "smartwach",
+  "jamtanganpria",
+  "jamtanganwanita",
+  "jamtanganmurah",
+  "jamtanganviral",
   "smartwach diskon",
   "Smartwatchs 10 pro max"
 ];
@@ -142,7 +146,7 @@ function getRandomHashtags() {
   let shuffled = [...keywords]
     .sort(() => 0.5 - Math.random());
 
-  let selected = shuffled.slice(0,3);
+  let selected = shuffled.slice(0,5);
 
   return selected.map(item => {
     return "#" + item.replace(/\s+/g,'');
