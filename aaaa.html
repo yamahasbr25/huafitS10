@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>US Quotes Prompt Generator</title>
+    <style>
+        :root {
+            --primary: #0f172a;
+            --primary-hover: #334155;
+            --bg: #f8fafc;
+            --surface: #ffffff;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --success: #10b981;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text-main);
+            display: flex;
+            justify-content: center;
+            padding: 2.5rem 1rem;
+            line-height: 1.5;
+        }
+
+        .container {
+            background-color: var(--surface);
+            padding: 2.5rem;
+            border-radius: 16px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -4px rgba(0, 0, 0, 0.05), border: 1px solid var(--border);
+            width: 100%;
+            max-width: 768px;
+        }
+
+        .header {
+            margin-bottom: 2rem;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 1.5rem;
+        }
+
+        h1 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            letter-spacing: -0.025em;
+            margin-bottom: 0.5rem;
+        }
+
+        p.desc {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        label {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-main);
+        }
+
+        .helper-text {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        input[type="number"], 
+        input[type="text"] {
+            width: 100%;
+            padding: 0.875rem 1rem;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.2s ease;
+            background-color: #f8fafc;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--primary);
+            background-color: var(--surface);
+            box-shadow: 0 0 0 3px rgba(15, 23, 42, 0.1);
+        }
+
+        .btn-generate {
+            width: 100%;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 1rem;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-generate:hover {
+            background-color: var(--primary-hover);
+        }
+
+        .output-section {
+            margin-top: 2.5rem;
+            display: none;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .output-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .output-header h2 {
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+
+        .btn-copy {
+            background-color: #f1f5f9;
+            color: var(--text-main);
+            border: 1px solid var(--border);
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.375rem;
+        }
+
+        .btn-copy:hover {
+            background-color: #e2e8f0;
+        }
+
+        .btn-copy.success {
+            background-color: var(--success);
+            color: white;
+            border-color: var(--success);
+        }
+
+        textarea#output-prompt {
+            width: 100%;
+            height: 380px;
+            padding: 1.25rem;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 0.9rem;
+            line-height: 1.6;
+            resize: vertical;
+            background-color: #f8fafc;
+            color: #334155;
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+        }
+
+        textarea#output-prompt:focus {
+            outline: none;
+            border-color: var(--border);
+        }
+        
+        svg {
+            width: 1.1em;
+            height: 1.1em;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="header">
+            <h1>Master Prompt Generator</h1>
+            <p class="desc">Generate high-converting, deeply emotional quote prompts for US audiences.</p>
+        </div>
+
+        <div class="form-grid">
+            <div class="form-group">
+                <label for="quote-count">Number of Quotes</label>
+                <input type="number" id="quote-count" min="1" max="100" placeholder="e.g., 10">
+                <span class="helper-text">How many JSON objects do you want to generate in one batch?</span>
+            </div>
+
+            <div class="form-group">
+                <label for="quote-theme">Theme / Topic</label>
+                <input type="text" id="quote-theme" placeholder="e.g., outgrowing people you once loved">
+                <span class="helper-text">Be specific about the emotional struggle or situation.</span>
+            </div>
+        </div>
+
+        <button class="btn-generate" id="btn-generate">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9.75 3.104v5.714a2.25 2.25 0 01-.659 1.591L5 14.5M9.75 3.104c-.251.023-.501.05-.75.082m.75-.082a24.301 24.301 0 014.5 0m0 0v5.714c0 .597.237 1.17.659 1.591L19.8 15.3M14.25 3.104c.251.023.501.05.75.082M19.8 15.3l-1.57.393A9.065 9.065 0 0112 15a9.065 9.065 0 00-6.23-.693L5 14.5m14.8.8l1.402 1.402c1.232 1.232.65 3.318-1.067 3.611A48.309 48.309 0 0112 21c-2.773 0-5.491-.235-8.135-.687-1.718-.293-2.3-2.379-1.067-3.61L5 14.5" />
+            </svg>
+            Generate Prompt
+        </button>
+
+        <div class="output-section" id="output-section">
+            <div class="output-header">
+                <h2>Generated Master Prompt</h2>
+                <button class="btn-copy" id="btn-copy">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15.666 3.888A2.25 2.25 0 0013.5 2.25h-3c-1.03 0-1.9.693-2.166 1.638m7.332 0c.055.194.084.4.084.612v0a.75.75 0 01-.75.75H9a.75.75 0 01-.75-.75v0c0-.212.03-.418.084-.612m7.332 0c.646.049 1.288.11 1.927.184 1.1.128 1.907 1.077 1.907 2.185V19.5a2.25 2.25 0 01-2.25 2.25H6.75A2.25 2.25 0 014.5 19.5V6.257c0-1.108.806-2.057 1.907-2.185a48.208 48.208 0 011.927-.184" />
+                    </svg>
+                    Copy Output
+                </button>
+            </div>
+            <textarea id="output-prompt" readonly></textarea>
+        </div>
+    </div>
+
+    <script>
+        const inputCount = document.getElementById('quote-count');
+        const inputTheme = document.getElementById('quote-theme');
+        const btnGenerate = document.getElementById('btn-generate');
+        const outputSection = document.getElementById('output-section');
+        const outputPrompt = document.getElementById('output-prompt');
+        const btnCopy = document.getElementById('btn-copy');
+
+        // Load saved data from localStorage on load
+        document.addEventListener('DOMContentLoaded', () => {
+            const savedCount = localStorage.getItem('prompt_quote_count');
+            const savedTheme = localStorage.getItem('prompt_quote_theme');
+
+            if (savedCount) inputCount.value = savedCount;
+            if (savedTheme) inputTheme.value = savedTheme;
+        });
+
+        const promptTemplate = `Act as a Master Copywriter and Behavioral Psychologist who specializes in human vulnerability and emotional resonance. Your task is to write {{NUMBER}} short, deeply emotional, and universally relatable quotes targeted at a US demographic.
+
+CONTEXT & THEME:
+Focus on the theme of: "{{THEME}}". The quotes must capture unspoken truths that make the reader think, "I thought I was the only one who felt this way."
+
+STRICT GUIDELINES:
+1. Tone: Raw, authentic, conversational, and slightly vulnerable. It must sound like something a highly empathetic human would write in a personal journal late at night, NOT a motivational speaker on a stage.
+2. Anti-AI Vocabulary: You are strictly forbidden from using common AI clichés. DO NOT use words like: tapestry, delve, testament, realm, symphony, navigate, beacon, or intricate.
+3. Length: Keep it concise. Each quote must be between 10 to 25 words. Punchy enough for a short-form video or an aesthetic Pinterest graphic.
+4. Structure: Avoid starting with "Sometimes..." or "In the end...". Use strong, immediate openings.
+
+OUTPUT FORMAT:
+Provide the output in a clean JSON format for easy extraction. Structure the array with the following keys:
+- "id": number
+- "quote": "The exact quote text"
+- "core_emotion": "The primary emotion triggered (e.g., Nostalgia, Relief, Validation)"
+- "video_hook": "A short, 2-3 word text overlay to hook the viewer in the first second (e.g., 'A hard truth:', 'Read this twice:')"`;
+
+        btnGenerate.addEventListener('click', () => {
+            const count = inputCount.value.trim() || '10';
+            const theme = inputTheme.value.trim() || 'the silent struggles of adulthood';
+
+            // Save to localStorage
+            localStorage.setItem('prompt_quote_count', count);
+            localStorage.setItem('prompt_quote_theme', theme);
+
+            // Generate Prompt
+            const finalPrompt = promptTemplate
+                .replace('{{NUMBER}}', count)
+                .replace('{{THEME}}', theme);
+
+            outputPrompt.value = finalPrompt;
+            outputSection.style.display = 'block';
+            
+            // Scroll to output
+            setTimeout(() => {
+                outputSection.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }, 50);
+        });
+
+        btnCopy.addEventListener('click', async () => {
+            try {
+                await navigator.clipboard.writeText(outputPrompt.value);
+                
+                // Visual feedback
+                const originalHTML = btnCopy.innerHTML;
+                btnCopy.classList.add('success');
+                btnCopy.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" /></svg> Copied!`;
+                
+                setTimeout(() => {
+                    btnCopy.classList.remove('success');
+                    btnCopy.innerHTML = originalHTML;
+                }, 2000);
+            } catch (err) {
+                console.error('Failed to copy text: ', err);
+                alert('Failed to copy text to clipboard.');
+            }
+        });
+    </script>
+</body>
+</html>
